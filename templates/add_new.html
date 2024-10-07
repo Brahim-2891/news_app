@@ -1,0 +1,38 @@
+{% extends 'header.html' %}
+
+{% block title %}إضافة خبر جديد{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>إضافة خبر جديد</h1>
+    
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="alert alert-{{ messages[0][0] }} mt-3">
+                {{ messages[0][1] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- News Form -->
+    <form method="POST" action="{{ url_for('add_new') }}">
+        <div class="mb-3">
+            <label for="title" class="form-label">عنوان الخبر</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="اكتب عنوان الخبر" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="article" class="form-label">المقال</label>
+            <textarea class="form-control" id="article" name="article" rows="5" placeholder="اكتب المقال هنا" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="img_url" class="form-label">رابط الصورة</label>
+            <input type="url" class="form-control" id="img_url" name="img_url" placeholder="https://example.com/image.jpg" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">إضافة الخبر</button>
+    </form>
+</div>
+{% endblock %}

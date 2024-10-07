@@ -1,0 +1,30 @@
+{% extends 'header.html' %}
+
+{% block title %}الصفحة الرئيسية{% endblock %}
+
+{% block content %}
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for new in all_news %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <a href="{{ url_for('show_news', news_id=new.id) }}">
+              <img src="{{ new.img_url }}" alt="{{ new.title }}" class="img-fluid">
+            </a>
+            <div class="card-body">
+              <p class="card-text">{{ new.title }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="{{ url_for('show_news', news_id=new.id) }}" class="btn btn-sm btn-outline-secondary">عرض</a>
+                </div>
+                <small class="text-body-secondary">{{ new.date.strftime('%Y-%m-%d') }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+</div>
+{% endblock %}
