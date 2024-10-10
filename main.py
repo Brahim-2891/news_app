@@ -50,27 +50,15 @@ def add_new_news(title: str, article: str, img_url: str):
     db.session.commit()       # Commit the session to write the changes to the database
     print(f"News '{title}' has been added successfully.")
 
-# Example route to test adding news
-@app.route('/add_news')
-def add_news_example():
-    # Example data
-    title = "Breaking News!"
-    article = "This is an example of a breaking news article."
-    img_url = "https://example.com/image.jpg"
-    
-    # Call the function to add the news
-    add_new_news(title, article, img_url)
-    
-    return "News added!"
 
 
-@app.route('/show_news')
-def show_news():
-    # Fetch all news from the News table
-    all_news = News.query.all()
+# @app.route('/show_news')
+# def show_news():
+#     # Fetch all news from the News table
+#     all_news = News.query.all()
     
-    # Render the 'show_news.html' template and pass the news data
-    return render_template('show_news.html', all_news=all_news)
+#     # Render the 'show_news.html' template and pass the news data
+#     return render_template('show_news.html', all_news=all_news)
 
 
 from flask import request, redirect, url_for, flash
