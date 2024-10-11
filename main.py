@@ -1,9 +1,12 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
+from forms import RegisterForm
 from flask_sqlalchemy import SQLAlchemy 
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import Integer, String, Text, DateTime
 from datetime import datetime
 import datetime 
+from flask_login import UserMixin, login_user, current_user, LoginManager, logout_user
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 app =  Flask(__name__)
@@ -17,6 +20,14 @@ app.config['SECRET_KEY'] = 'Brahim@1982Xyza'
 db = SQLAlchemy()
 db.init_app(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 class News(db.Model):
     __tablename__ = "News"
@@ -27,8 +38,73 @@ class News(db.Model):
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
 
 
+class User(UserMixin, db.Model):
+    __tablename__ = "Users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    # Parent relationship: "comment_author" refers to the comment_author property in the Comment class.
+    # comments = relationship("Comment", back_populates="comment_author")
+
+
 with app.app_context():
     db.create_all()
+
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        # Check if email already exists
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash("You've already signed up with that email, log in instead!", "warning")
+            return redirect(url_for('login'))
+
+        # Hash the password and create a new user
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password
+        )
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash("You've been successfully registered. Please log in.", "success")
+            return redirect(url_for('home'))
+        except Exception as e:
+            flash("An error occurred while creating your account. Please try again.", "danger")
+            db.session.rollback()  # Roll back the session on error
+
+    return render_template('register.html', form=form)
+
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        
+        # Query the user by email (you'll need a User model for this)
+        user = User.query.filter_by(email=email).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            flash("تم تسجيل الدخول بنجاح", "success")
+            return redirect(url_for('home'))
+        else:
+            flash("فشل تسجيل الدخول. تأكد من البريد الإلكتروني أو كلمة المرور", "danger")
+
+    return render_template("login.html")
+
 
 
 @app.route('/')
@@ -118,6 +194,28 @@ def edit_news(news_id):
     
     # Render the edit form with current news data
     return render_template('edit_news.html', news=news)
+
+
+@app.route("/delete_news/<int:news_id>", methods=["POST"])
+def delete_news(news_id):
+    news_item = News.query.get_or_404(news_id)  # Get the news by ID, 404 if not found
+    try:
+        db.session.delete(news_item)
+        db.session.commit()
+        flash("خبر تم حذفه بنجاح", "success")  # Flash message for successful deletion
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of error
+        flash("حدث خطأ أثناء حذف الخبر", "danger")
+    return redirect(url_for('home')) 
+
+@app.route('/logout')
+#@login_required   Ensure the user is logged in before allowing logout
+def logout():
+    logout_user()  # Log out the user
+    flash("You've been logged out successfully!")  # Flash a message to the user
+    return redirect(url_for('home'))  # Redirect to the login page
+
+
 
 
 if __name__ == '__main__':
