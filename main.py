@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy 
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy import Integer, String, Text, DateTime
@@ -34,8 +34,9 @@ with app.app_context():
 @app.route('/')
 def home():
     all_news = News.query.all()
-   
-    return render_template('home.html',all_news=all_news) #, title="الصفحة الرئيسية")
+    # result = db.session.execute(db.select(News))
+    # all_news = result.scalars().all()
+    return render_template('home.html',all_news=all_news) 
 
 # Function to add new news to the database
 def add_new_news(title: str, article: str, img_url: str):
@@ -61,8 +62,6 @@ def add_new_news(title: str, article: str, img_url: str):
 #     return render_template('show_news.html', all_news=all_news)
 
 
-from flask import request, redirect, url_for, flash
-
 @app.route('/add_new', methods=['GET', 'POST'])
 def add_new():
     if request.method == 'POST':
@@ -87,7 +86,7 @@ def add_new():
         db.session.commit()
 
         flash('News added successfully!', 'success')
-        return redirect(url_for('show_news'))  # Redirect to the list of news after submission
+        return redirect(url_for('home'))  # Redirect to the list of news after submission
 
     # For GET request, just render the form
     return render_template('add_new.html')
@@ -101,7 +100,24 @@ def read_news(news_id):
     # Render a template to display the news article
     return render_template('read_news.html', news=news)
 
-
+@app.route('/edit_news/<int:news_id>', methods=['GET', 'POST'])
+def edit_news(news_id):
+    # Fetch the news article by ID
+    news = News.query.get_or_404(news_id)
+    
+    if request.method == 'POST':
+        # Update news data based on form input
+        news.title = request.form['title']
+        news.article = request.form['article']
+        news.img_url = request.form['img_url']
+        
+        db.session.commit()  # Save the changes to the database
+        
+        flash('News updated successfully!', 'success')
+        return redirect(url_for('home'))  # Redirect to the homepage
+    
+    # Render the edit form with current news data
+    return render_template('edit_news.html', news=news)
 
 
 if __name__ == '__main__':

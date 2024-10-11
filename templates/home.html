@@ -11,6 +11,7 @@
                     aria-label="Slide {{ loop.index }}"></button>
         {% endfor %}
     </div>
+    <div class="container mt-4 mb-4 p-3">
     <div class="carousel-inner">
         {% for new in all_news %}
         <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
@@ -25,6 +26,7 @@
         </div>
         {% endfor %}
     </div>
+    </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
@@ -34,15 +36,16 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
-
+<div class="container mt-4 mb-4 p-3">
 <div class="row">
-    {% for new in all_news[:3] %} <!-- Display only the first three news articles -->
+    {% for new in all_news %} <!-- Display only the first three news articles -->
     <div class="col-lg-4">
-        <img src="{{ new.img_url }}" alt="{{ new.title }}" class="bd-placeholder-img rounded-circle" width="140" height="140" style="object-fit: cover;">
+        <img src="{{ new.img_url }}" alt="{{ new.title }}" class="bd-placeholder-img" width="140" height="140" style="object-fit: cover; border-radius: 0;">
         <h2>{{ new.title }}</h2>
         <p>{{ new.article[:100] }}...</p> <!-- Show a short excerpt -->
         <p><a class="btn btn-secondary" href="{{ url_for('read_news', news_id=new.id) }}">عرض التفاصيل »</a></p>
     </div><!-- /.col-lg-4 -->
     {% endfor %}
+</div>
 </div>
 {% endblock %}
