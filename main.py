@@ -86,6 +86,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "GET":
+        return render_template('login.html')
+    
     if current_user.is_authenticated:
         return redirect(url_for('home'))
 
@@ -211,9 +214,12 @@ def delete_news(news_id):
 @app.route('/logout')
 #@login_required   Ensure the user is logged in before allowing logout
 def logout():
-    logout_user()  # Log out the user
-    flash("You've been logged out successfully!")  # Flash a message to the user
-    return redirect(url_for('home'))  # Redirect to the login page
+    if current_user.is_authenticated:
+        logout_user()
+        flash('تم تسجيل الخروج بنجاح', 'success')
+    else:
+        flash('أنت بالفعل خارج النظام', 'warning')
+    return redirect(url_for('home'))
 
 
 
