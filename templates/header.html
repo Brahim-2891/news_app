@@ -23,8 +23,13 @@
           <li class="nav-item"><a href="#" class="nav-link">ارشيف</a></li>
           <li class="nav-item"><a href="#" class="nav-link">رياضة</a></li>
           <li class="nav-item"><a href="#" class="nav-link">فن</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">حول الفريق</a></li>
-          <li class="nav-item"><a href="{{ url_for('add_new') }}" class="nav-link">أضف خبرا</a></li>
+          <li class="nav-item"><a href="https://github.com/Brahim-2891" class="nav-link">حول الفريق</a></li>
+                <!-- Only display "Add News" if the user is logged in -->
+        {% if current_user.is_authenticated %}
+            <li class="nav-item">
+                <a href="{{ url_for('add_new') }}" class="nav-link">أضف خبرا</a>
+            </li>
+        
 
           {% if news %}
             <li class="nav-item">
@@ -36,6 +41,7 @@
               </form>
           </li>
           {% endif %}
+        {% endif %}
 
           <!-- Register and Login Links -->
           {% if not current_user.is_authenticated %}
@@ -45,9 +51,10 @@
             <li class="nav-item">
                 <a href="{{ url_for('login') }}" class="nav-link">تسجيل الدخول</a>
             </li>
+            
           {% else %}
             <li class="nav-item">
-                <a href="{{ url_for('home') }}" class="nav-link">تسجيل الخروج</a>
+                <a href="{{ url_for('logout') }}" class="nav-link">تسجيل الخروج</a>
             </li>
           {% endif %}
         </ul>
