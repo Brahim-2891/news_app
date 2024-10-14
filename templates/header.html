@@ -8,56 +8,68 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
 </head>
 <body>
 
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-boombox-fill me-2 icon-spacing" viewBox="0 0 16 16">
-        <path d="M14 0a.5.5 0 0 1 .5.5V2h.5a1 1 0 0 1 1 1v2H0V3a1 1 0 0 1 1-1h12.5V.5A.5.5 0 0 1 14 0M2 3.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m7.5.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m1.5-.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0M9.5 3h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1M6 10.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1.5.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m7 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m.5-1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
-        <path d="M0 6h16v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm2 4.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0m7 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0"/>
-    </svg>
-        <ul class="nav nav-pills justify-content-center">
-        
-          <li class="nav-item"><a href="{{ url_for('home') }}" class="nav-link active" aria-current="page">الصفحة الرئيسية</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">ارشيف</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">رياضة</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">فن</a></li>
-          <li class="nav-item"><a href="https://github.com/Brahim-2891" class="nav-link">حول الفريق</a></li>
-                <!-- Only display "Add News" if the user is logged in -->
-        {% if current_user.is_authenticated %}
-            <li class="nav-item">
-                <a href="{{ url_for('add_new') }}" class="nav-link">أضف خبرا</a>
-            </li>
-        
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-          {% if news %}
-            <li class="nav-item">
-              <a href="{{ url_for('edit_news', news_id=news.id) }}" class="nav-link">تعديل الخبر</a>
-            </li>
-            <li class="nav-item">
-              <form action="{{ url_for('delete_news', news_id=news.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف الخبر؟');">
-                  <button type="submit" class="btn btn-link nav-link">مسح الخبر</button>
-              </form>
-          </li>
-          {% endif %}
-        {% endif %}
-
-          <!-- Register and Login Links -->
-          {% if not current_user.is_authenticated %}
-            <li class="nav-item">
-                <a href="{{ url_for('register') }}" class="nav-link">التسجيل بالموقع</a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('login') }}" class="nav-link">تسجيل الدخول</a>
-            </li>
-            
-          {% else %}
-            <li class="nav-item">
-                <a href="{{ url_for('logout') }}" class="nav-link">تسجيل الخروج</a>
-            </li>
-          {% endif %}
-        </ul>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="{{ url_for('home') }}" class="nav-link active" aria-current="page">الصفحة الرئيسية</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">ارشيف</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">رياضة</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">فن</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="https://github.com/Brahim-2891" class="nav-link">حول الفريق</a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a href="{{ url_for('add_new') }}" class="nav-link">أضف خبرا</a>
+                            </li>
+                            {% if news %}
+                                <li class="nav-item">
+                                    <a href="{{ url_for('edit_news', news_id=news.id) }}" class="nav-link">تعديل الخبر</a>
+                                </li>
+                                <li class="nav-item">
+                                    <form action="{{ url_for('delete_news', news_id=news.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف الخبر؟');">
+                                        <button type="submit" class="btn btn-link nav-link">مسح الخبر</button>
+                                    </form>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        {% if not current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a href="{{ url_for('register') }}" class="nav-link">التسجيل بالموقع</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('login') }}" class="nav-link">تسجيل الدخول</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a href="{{ url_for('logout') }}" class="nav-link">تسجيل الخروج</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <a class="navbar-brand" href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" width="50" height="50" class="me-2 icon-spacing">
+                </a>
+            </div>
+        </nav>
     </header>
 
     <!-- Flash Messages -->
